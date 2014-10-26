@@ -21,11 +21,17 @@ int main(int argc, char **argv)
 	pid_t pid;
     
     if (argc != 2) {
-        printf("Pleas input an Error Percentage following function name!");
+        printf("Pleas input an Error Percentage following function name!\n");
         exit(1);
     }
     
     error_percentage = atoi(argv[1]);
+    
+    if (error_percentage > 99 || error_percentage < 0) {
+        printf("The range of error percentage varies between 0 to 99! Please give a reasonable value!\n");
+        exit(1);
+    }
+    
 
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);          //create socket
 	if (sockfd <0)
@@ -65,7 +71,7 @@ int main(int argc, char **argv)
 		if ((pid = fork())==0)                                         // creat acception process
 		{
 			close(sockfd);
-			str_ser(con_fd);                                          //receive packet and response
+			str_ser(con_fd, error_percentage);                                          //receive packet and response
 			close(con_fd);
 			exit(0);
 		}
@@ -83,8 +89,8 @@ void str_ser(int sockfd, int error_percentage)
 	struct ack_so ack;
 	int end = 0, n = 0;
 	long lseek=0;
-    int received_num = 0;
-    int package_num = 0;
+    int received = 0;
+    int package_index = 0;
 	
 	printf("receiving data!\n");
 
@@ -101,7 +107,7 @@ void str_ser(int sockfd, int error_percentage)
 			n --;
 		}
 		memcpy((buf+lseek), recvs, n);
-        if (packageIdx < errorRate) {
+        if (package_index < error_percentage) {
             ack.num = 0;
             ack.len = 0;
         } else {
@@ -109,11 +115,11 @@ void str_ser(int sockfd, int error_percentage)
             ack.num = 1;
             ack.len = 0;
         }
-        if ((recieveN = send(sockfd, &ack, 2, 0)) == -1) {
+        if ((received = send(sockfd, &ack, 2, 0)) == -1) {
             printf("send error!");
             exit(1);
         }
-        packageIdx = (++packageIdx) % 100;
+        package_index = (package_index+1) % 100;
 	}
 
 	if ((fp = fopen ("myTCPreceive.txt","wt")) == NULL)

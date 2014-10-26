@@ -4,7 +4,7 @@ tcp_client.c: the source file of the client in tcp transmission
 
 #include "headsock.h"
 
-float str_cli(FILE *fp, int sockfd, long *len);                       //transmission function
+float str_cli(FILE *fp, int sockfd, long *len, int *error_num);                       //transmission function
 void tv_sub(struct  timeval *out, struct timeval *in);	    //calcu the time interval between out and in
 
 int main(int argc, char **argv)
@@ -17,6 +17,7 @@ int main(int argc, char **argv)
 	struct hostent *sh;
 	struct in_addr **addrs;
 	FILE *fp;
+    int error_num = 0;
 
 	if (argc != 2) {
 		printf("parameters not match");
@@ -65,16 +66,17 @@ int main(int argc, char **argv)
 		exit(0);
 	}
     
-	ti = str_cli(fp, sockfd, &len);                       //perform the transmission and receiving
+	ti = str_cli(fp, sockfd, &len, &error_num);                       //perform the transmission and receiving
 	rt = (len/(float)ti);                                         //caculate the average transmission rate
 	printf("Time(ms) : %.3f, Data sent(byte): %d\nData rate: %f (Kbytes/s)\n", ti, (int)len, rt);
+    printf("Total number of errors is: %d\n", error_num);
 
 	close(sockfd);
 	fclose(fp);
 	exit(0);
 }
 
-float str_cli(FILE *fp, int sockfd, long *len, int *error_percentage)
+float str_cli(FILE *fp, int sockfd, long *len, int *error_num)
 {
 	char *buf;
 	long lsize, ci;
@@ -83,7 +85,7 @@ float str_cli(FILE *fp, int sockfd, long *len, int *error_percentage)
 	int n, slen;
 	float time_inv = 0.0;
 	struct timeval sendt, recvt;
-	ci = 0;
+    ci = 0;
 
 	fseek (fp , 0 , SEEK_END);
 	lsize = ftell (fp);
@@ -115,10 +117,10 @@ float str_cli(FILE *fp, int sockfd, long *len, int *error_percentage)
 		}
         if ((n= recv(sockfd, &ack, 2, 0)) == -1) {
             printf("error when receiving\n");
-        } else if (ack.num != 1|| ack.len != 0) {
-            (*numberOfErrors)++;
-        } else {
+        } else if (ack.num == 1 && ack.len == 0) {
             ci += slen;
+        } else {
+            (*error_num)++;
         }
 	}
 	gettimeofday(&recvt, NULL);
