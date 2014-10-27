@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>F63E9772-362C-484B-9406-1440EC0CA53B</string>
+	<key>IDESourceControlProjectName</key>
+	<string>lab1</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>9D26DA3A71E5FD45C5627ECA5821AF2FADBAC9A1</key>
+		<string>https://github.com/roastedbill/Tiny_School_Projects.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>CS3241CG/lab1/lab1.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>9D26DA3A71E5FD45C5627ECA5821AF2FADBAC9A1</key>
+		<string>../../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/roastedbill/Tiny_School_Projects.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>9D26DA3A71E5FD45C5627ECA5821AF2FADBAC9A1</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>9D26DA3A71E5FD45C5627ECA5821AF2FADBAC9A1</string>
+			<key>IDESourceControlWCCName</key>
+			<string>Tiny_School_Prjects</string>
+		</dict>
+	</array>
+</dict>
+</plist>
