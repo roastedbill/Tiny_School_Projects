@@ -67,7 +67,101 @@ void display(void)
 	if(displayControlLines)
 	{
 		glColor3f(0,1,0);
+        for(int i=0;i<nPt-1; i++)
+        {
+            glBegin(GL_LINES);
+            glVertex2d(ptList[i].x, ptList[i].y);
+            glVertex2d(ptList[i+1].x, ptList[i+1].y);
+            glEnd();
+        }
 	}
+    
+    
+    for(int i=0; i<nPt; i++) // draw degree 3 Bezier Curves
+    {
+        if(i>0 && i%3==0)
+        {
+            for(int t=1; t<=100; t++){
+                if(displayTangentVectors && nPt>3 && ((100*i+t)%((nPt-1)/3*100/NOBJECTONCURVE)==0))
+                {
+                    // TODO: Add C1 vector
+                    double a =180/3.141592653*atan2f(
+                                                     (1-t/100.0)*(1-t/100.0)*(1-t/100.0)*ptList[i-3].y+
+                                                     3*(1-t/100.0)*(1-t/100.0)*(t/100.0)*ptList[i-2].y+
+                                                     3*(1-t/100.0)*(t/100.0)*(t/100.0)*ptList[i-1].y+
+                                                     (t/100.0)*(t/100.0)*(t/100.0)*ptList[i].y-
+                                                     (1-(t-1)/100.0)*(1-(t-1)/100.0)*(1-(t-1)/100.0)*ptList[i-3].y-
+                                                     3*(1-(t-1)/100.0)*(1-(t-1)/100.0)*((t-1)/100.0)*ptList[i-2].y-
+                                                     3*(1-(t-1)/100.0)*((t-1)/100.0)*((t-1)/100.0)*ptList[i-1].y-
+                                                     (t-1)/100.0*(t-1)/100.0*(t-1)/100.0*ptList[i].y,
+                                                     (1-t/100.0)*(1-t/100.0)*(1-t/100.0)*ptList[i-3].x+
+                                                     3*(1-t/100.0)*(1-t/100.0)*(t/100.0)*ptList[i-2].x+
+                                                     3*(1-t/100.0)*(t/100.0)*(t/100.0)*ptList[i-1].x+
+                                                     (t/100.0)*(t/100.0)*(t/100.0)*ptList[i].x-
+                                                     (1-(t-1)/100.0)*(1-(t-1)/100.0)*(1-(t-1)/100.0)*ptList[i-3].x-
+                                                     3*(1-(t-1)/100.0)*(1-(t-1)/100.0)*((t-1)/100.0)*ptList[i-2].x-
+                                                     3*(1-(t-1)/100.0)*(t-1)/100.0*(t-1)/100.0*ptList[i-1].x-
+                                                     (t-1)/100.0*(t-1)/100.0*(t-1)/100.0*ptList[i].x);
+                    glPushMatrix();
+                    glTranslatef((1-t/100.0)*(1-t/100.0)*(1-t/100.0)*ptList[i-3].x+
+                                 3*(1-t/100.0)*(1-t/100.0)*(t/100.0)*ptList[i-2].x+
+                                 3*(1-t/100.0)*(t/100.0)*(t/100.0)*ptList[i-1].x+
+                                 (t/100.0)*(t/100.0)*(t/100.0)*ptList[i].x,
+                                 (1-t/100.0)*(1-t/100.0)*(1-t/100.0)*ptList[i-3].y+
+                                 3*(1-t/100.0)*(1-t/100.0)*(t/100.0)*ptList[i-2].y+
+                                 3*(1-t/100.0)*(t/100.0)*(t/100.0)*ptList[i-1].y+
+                                 (t/100.0)*(t/100.0)*(t/100.0)*ptList[i].y, 0);
+                    glRotatef(a,0, 0, 1);
+                    drawRightArrow();
+                    glPopMatrix();
+                }
+            }
+            
+            if(C1Continuity && i>3){
+                glColor3f(0.8,0.8,0.8);
+            }else{
+                glColor3f(0,0,1);
+            }
+            glBegin(GL_LINE_STRIP);
+            for(int t=0; t<=100; t++)
+            {
+                glVertex2d((1-t/100.0)*(1-t/100.0)*(1-t/100.0)*ptList[i-3].x+
+                           3*(1-t/100.0)*(1-t/100.0)*(t/100.0)*ptList[i-2].x+
+                           3*(1-t/100.0)*(t/100.0)*(t/100.0)*ptList[i-1].x+
+                           (t/100.0)*(t/100.0)*(t/100.0)*ptList[i].x,
+                           (1-t/100.0)*(1-t/100.0)*(1-t/100.0)*ptList[i-3].y+
+                           3*(1-t/100.0)*(1-t/100.0)*(t/100.0)*ptList[i-2].y+
+                           3*(1-t/100.0)*(t/100.0)*(t/100.0)*ptList[i-1].y+
+                           (t/100.0)*(t/100.0)*(t/100.0)*ptList[i].y
+                            );
+            }
+            glEnd();
+            
+            if(C1Continuity && i>3){
+                glColor3f(1,0,0);
+                glBegin(GL_LINE_STRIP);
+                for(int t=0; t<=100; t++)
+                {
+                    glVertex2d(
+                               (1-t/100.0)*(1-t/100.0)*(1-t/100.0)*ptList[i-3].x+
+                               3*(1-t/100.0)*(1-t/100.0)*(t/100.0)*(2*ptList[i-3].x-ptList[i-4].x)+
+                               3*(1-t/100.0)*(t/100.0)*(t/100.0)*ptList[i-1].x+
+                               (t/100.0)*(t/100.0)*(t/100.0)*ptList[i].x,
+                               (1-t/100.0)*(1-t/100.0)*(1-t/100.0)*ptList[i-3].y+
+                               3*(1-t/100.0)*(1-t/100.0)*(t/100.0)*(2*ptList[i-3].y-ptList[i-4].y)+
+                               3*(1-t/100.0)*(t/100.0)*(t/100.0)*ptList[i-1].y+
+                               (t/100.0)*(t/100.0)*(t/100.0)*ptList[i].y
+                               );
+                    
+                }
+                glEnd();
+            }
+            
+        }
+    }
+    
+    //TODO: Add own feature
+    
     
 	glPopMatrix();
 	glutSwapBuffers ();
@@ -78,20 +172,20 @@ void reshape (int w, int h)
 	glViewport (0, 0, (GLsizei) w, (GLsizei) h);
 	glMatrixMode (GL_PROJECTION);
 	glLoadIdentity();
-	gluOrtho2D(0,w,h,0);  
+	gluOrtho2D(0,w,h,0);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	
 }
 
 void init(void)
 {
 	glClearColor (1.0,1.0,1.0, 1.0);
+    glEnable(GL_LINE_SMOOTH);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 }
 
 void readFile()
 {
-    
 	std::ifstream file;
     file.open("savefile.txt");
 	file >> nPt;
@@ -164,8 +258,7 @@ void keyboard (unsigned char key, int x, int y)
             
 		case 'e':
 		case 'E':
-			// Do something to erase all the control points added
-            
+            nPt = 0;
             break;
             
 		case 'Q':
