@@ -110,14 +110,15 @@ float str_cli(FILE *fp, int sockfd, long *len, int *error_num)
 		else 
 			slen = DATALEN;
 		memcpy(sends, (buf+ci), slen);
-		n = send(sockfd, &sends, slen, 0);
+        
+		n = send(sockfd, &sends, slen, 0); //tcp ---udp:senddata
 		if(n == -1) {
 			printf("send error!");								//send the data
 			exit(1);
 		}
         if ((n= recv(sockfd, &ack, 2, 0)) == -1) {
             printf("error when receiving\n");
-        } else if (ack.num == 1 && ack.len == 0) {
+        } else if (ack.num != 0 && ack.len == 0) {
             ci += slen;
         } else {
             (*error_num)++;

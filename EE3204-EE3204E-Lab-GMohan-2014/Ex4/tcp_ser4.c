@@ -90,7 +90,7 @@ void str_ser(int sockfd, int error_percentage)
 	int end = 0, n = 0;
 	long lseek=0;
     int received = 0;
-    int package_index = 0;
+    uint8_t package_index = 1;
 	
 	printf("receiving data!\n");
 
@@ -101,25 +101,29 @@ void str_ser(int sockfd, int error_percentage)
 			printf("error when receiving\n");
 			exit(1);
 		}
-		if (recvs[n-1] == '\0')									//if it is the end of the file
+		if (recvs[n-1] == '\0')								//if it is the end of the file
 		{
 			end = 1;
 			n --;
 		}
 		memcpy((buf+lseek), recvs, n);
-        if (package_index < error_percentage) {
+        if ((package_index%101) <= error_percentage) {
             ack.num = 0;
             ack.len = 0;
         } else {
             lseek += n;
-            ack.num = 1;
+            ack.num = package_index;
             ack.len = 0;
         }
         if ((received = send(sockfd, &ack, 2, 0)) == -1) {
             printf("send error!");
             exit(1);
         }
-        package_index = (package_index+1) % 100;
+        
+        if(package_index == 255)
+            package_index = 1;
+        else
+            package_index++;
 	}
 
 	if ((fp = fopen ("myTCPreceive.txt","wt")) == NULL)
